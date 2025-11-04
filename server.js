@@ -8,7 +8,14 @@ const cookieParser = require("cookie-parser");
 app.use(cookieParser());
 
 app.use(express.static('uploads'));
+
 app.use(express.static(path.join(__dirname, "views/instagram-clone")));
+app.use("/pages", express.static(path.join(__dirname, "views/instagram-clone/pages")));
+app.use("/js", express.static(path.join(__dirname, "views/instagram-clone/js")));
+app.use("/assets", express.static(path.join(__dirname, "views/instagram-clone/assets"))
+app.get("/", (req, res) => {
+  res.redirect("/pages/login.html");
+});
 
 
 const userRoutes = require("./routes/userRoutes");
