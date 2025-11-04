@@ -7,6 +7,7 @@ const cookieParser = require("cookie-parser");
 app.use(cookieParser());
 
 app.use(express.static('uploads'));
+app.use(express.static(path.join(__dirname, "views/instagram-clone")));
 
 
 const userRoutes = require("./routes/userRoutes");
