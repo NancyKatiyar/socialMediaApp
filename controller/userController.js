@@ -42,7 +42,8 @@ const userLogin = async(req,res)=>{
            res.cookie("token", token, {
       httpOnly: true,
       secure: false,  
-      maxAge: 3600000 
+      maxAge: 3600000,
+      path:"/"
     });
     const userData = {
       id: user.id,
@@ -50,7 +51,7 @@ const userLogin = async(req,res)=>{
       email: user.email,
     };
       // return res.status(201).json({message:"User login successfully",token,User:userData}); 
-      return successResponseData(res,"User login successfully",token,{User:userData})
+      return successResponseData(res,{User:userData,token},"User login successfully")
     } catch (error) {
              console.error("Error during user login:",error);
         // return res.status(500).json({message:"Invalid Credentials"});

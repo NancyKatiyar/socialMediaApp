@@ -54,11 +54,10 @@ const updateComment = async(req,res) =>{
 
 const getAllComments = async (req, res) => {
   try {
-    const user_id = req.user.id;
 
     const comments = await Comment.findAll({
-      where: { user_id }, 
-      attributes: ["comment_description"],
+
+      attributes: ["id","comment_description"],
       include: [
         {
           model: User,
@@ -76,7 +75,7 @@ const getAllComments = async (req, res) => {
     //   message: "All comments fetched successfully",
     //   data: comments,
     // });
-     return successResponseData(res,"All comments fetched successfully",{data:comments});
+     return successResponseData(res,{comments},"All comments fetched successfully");
   } catch (error) {
     console.error("Error during fetching comments:", error);
    return errorResponseData(res,"Internal server error")
@@ -109,37 +108,56 @@ const createReply = async (req, res) => {
 };
 
 
-const getAllreplies = async(req,res) =>{
+const getAllReplies = async (req, res) => {
   try {
-       const user_id = req.user.id;
-   const comments = await Comment.findAll({
-  where: { post_id: req.params.post_id, parent_id: null,user_id },
-  include: [
-    {
-      model: Comment,
-      as: 'replies',
+    const user_id = req.user.id;
+    const post_id = req.params.post_id;
+
+    const post = await Posts.findByPk(post_id);
+
+    if (!post) {
+      return errorResponseData(res, "Post not found");
+    }
+
+    let whereClause = { post_id, parent_id: null };
+    if (post.visibility === "EveryOneCan view ") {
+      if (post.user_id !== user_id) {
+        return errorResponseData(res, "You cannot view comments on this post");
+      }
+      whereClause.user_id = post.user_id;
+    }
+
+    const comments = await Comment.findAll({
+      where: whereClause,
       include: [
         {
           model: Comment,
-          as: 'replies',
+          as: "replies",
+          include: [
+            {
+              model: Comment,
+              as: "replies",
+            },
+          ],
+        },
+        {
+          model: User,
+          attributes: ["user_name"],
         },
       ],
-    },
-    {
-      model: User,
-      attributes: ['user_name'],
-    },
-  ],
-});
-return successResponseData(res,"Get All replies Successfully",{data:comments})
+    });
+
+    return successResponseData(res,{ comments }, "Get All replies successfully");
   } catch (error) {
-       return errorResponseData(res,"Internal server error")
+    console.error(error);
+    return errorResponseData(res, "Internal server error");
   }
-}
+};
 
 
 
 
 
 
-module.exports = {createComment,deleteComment,updateComment,getAllComments,createReply,getAllreplies}
+
+module.exports = {createComment,deleteComment,updateComment,getAllComments,createReply,getAllReplies}

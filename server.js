@@ -17,11 +17,7 @@ app.use(cookieParser());
 
 
 app.use(express.static(path.join(__dirname, "views/instagram-clone")));
-app.use(express.static("uploads"));
-
-app.get("/", (req, res) => {
-  res.redirect("/pages/login.html");
-});
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Routes
 const userRoutes = require("./routes/userRoutes");

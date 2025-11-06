@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+     <link rel="stylesheet" type="text/css" href="../style.css" />
+    <script src="../js/api/postApi.js" defer ></script>
+</head>
+<body>
+   <div>
+          <h2 style="text-align:center;">Create New Post</h2>
+      <form id="createPostForm" enctype="multipart/form-data">
+    <input type="text" id="post_title" name="post_title" placeholder="Enter post title" required />
+    <input type="file" id="image" name="image" accept="image/*" required />
+    <select id="visibility" name="visibility">
+      <option value="EveryOneCan view">Public</option>
+      <option value="Only Me">Only Me</option>
+    </select>
+    <button type="submit" id="submit">Create Post</button>
+  </form>
+   </div>
+</body>
+</html>

@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login | Mini Social App</title>
+  <link rel="stylesheet" href="../style.css" />
+  <style>
+    .error {
+      color: red;
+      margin-top: 10px;
+    }
+    .switch-link {
+      color: blue;
+      cursor: pointer;
+      text-decoration: underline;
+      margin-top: 10px;
+      display: inline-block;
+    }
+    .login-container {
+      width: 350px;
+      margin: 80px auto;
+      padding: 20px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+      border-radius: 10px;
+      background-color: #fff;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+    }
+    input {
+      width: 100%;
+      padding: 8px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    button {
+      width: 100%;
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+      background-color: #28a745;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #218838;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="login-container">
+    <h2 id="formTitle">Login</h2>
+
+    <!-- Login Form -->
+    <form id="loginForm">
+      <div class="form-group">
+        <label for="loginEmail">Email</label>
+        <input type="email" id="loginEmail" required />
+      </div>
+
+      <div class="form-group">
+        <label for="loginPassword">Password</label>
+        <input type="password" id="loginPassword" required />
+      </div>
+
+      <button type="submit">Login</button>
+      <p class="switch-link" id="showRegister">Don't have an account? Register</p>
+    </form>
+
+    <form id="registerForm" style="display: none;">
+      <div class="form-group">
+        <label for="user_name">Full Name</label>
+        <input type="text" id="user_name" required />
+      </div>
+
+      <div class="form-group">
+        <label for="registerEmail">Email</label>
+        <input type="email" id="registerEmail" required />
+      </div>
+
+      <div class="form-group">
+        <label for="registerPassword">Password</label>
+        <input type="password" id="registerPassword" required />
+      </div>
+
+      <button type="submit">Register</button>
+      <p class="switch-link" id="showLogin">Already have an account? Login</p>
+    </form>
+
+    <p id="errorMsg" class="error"></p>
+  </div>
+
+  <script>
+
+    // document.addEventListener("DOMContentLoaded", () => {
+    //   const token = document.cookie.split('; ').find(row => row.startsWith('token='));
+    //   if (token) {
+    //     window.location.href = "/views/instagram-clone/index.html";
+    //   }
+    // });
+
+
+
+    const BASE_URL = "http://localhost:3000";
+    const API = {
+      LOGIN: `${BASE_URL}/login`,
+      REGISTER: `${BASE_URL}/register`,
+    };
+
+    const errorMsg = document.getElementById("errorMsg");
+    const loginForm = document.getElementById("loginForm");
+    const registerForm = document.getElementById("registerForm");
+    const formTitle = document.getElementById("formTitle");
+
+    document.getElementById("showRegister").addEventListener("click", () => {
+      loginForm.style.display = "none";
+      registerForm.style.display = "block";
+      errorMsg.textContent = "";
+      formTitle.textContent = "Register";
+    });
+
+    document.getElementById("showLogin").addEventListener("click", () => {
+      registerForm.style.display = "none";
+      loginForm.style.display = "block";
+      errorMsg.textContent = "";
+      formTitle.textContent = "Login";
+    });
+
+
+  document.getElementById("loginForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const email = document.getElementById("loginEmail").value;
+  const password = document.getElementById("loginPassword").value;
+
+  const response = await fetch(API.LOGIN, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, password }),
+  });
+
+  const data = await response.json();
+  console.log(data);
+
+  if (data.success) {
+    const token = data.data.token;
+    document.cookie = `token=${token}; path=/`;
+    alert("Login successful!");
+    window.location.href = "/views/instagram-clone/index.html";
+  } else {
+    alert(data.message);
+  }
+});
+
+
+
+
+registerForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const user_name = document.getElementById("user_name").value.trim();
+  const email = document.getElementById("registerEmail").value.trim();
+  const password = document.getElementById("registerPassword").value.trim();
+
+  if (!user_name || !email || !password) {
+    errorMsg.textContent = "Please fill all fields";
+    return;
+  }
+
+  try {
+    const res = await fetch(API.REGISTER, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ user_name, email, password }), 
+    });
+
+    if (!res.ok) throw new Error(`Server responded with ${res.status}`);
+
+    const data = await res.json();
+    console.log("Register Response:", data);
+
+    if (data.success) {
+      alert("Registration successful! Please login now.");
+      registerForm.reset();
+      registerForm.style.display = "none";
+      loginForm.style.display = "block";
+      formTitle.textContent = "Login";
+      errorMsg.textContent = "";
+    } else {
+      errorMsg.textContent = data.message || "Registration failed";
+    }
+  } catch (err) {
+    console.error("Register error:", err);
+    errorMsg.textContent = "Something went wrong, please try again.";
+  }
+});
+
+  </script>
+
+</body>
+</html>
+
+

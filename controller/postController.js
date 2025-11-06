@@ -4,12 +4,13 @@ const { errorResponseData, successResponseData } = require("../utils/response");
 
 const createPosts = async(req,res)=>{
     try {
+      console.log("api ca;ling")
         const user_id = req.user.id;
         const {post_title,visibility} = req.body;
         const image = req.file ? req.file.filename : null;
         const posts = await Posts.create({post_title,image,user_id,visibility});
         // return res.status(200).json({message:"Post created successfully",posts});
-        return successResponseData(res,"Post created successfully",posts);
+        return successResponseData(res,{posts},"Post created successfully");
     } catch (error) {
             console.error("Error during create Posts:",error);
          return errorResponseData(res,"Internal server error")
