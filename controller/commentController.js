@@ -110,22 +110,9 @@ const createReply = async (req, res) => {
 
 const getAllReplies = async (req, res) => {
   try {
-    const user_id = req.user.id;
     const post_id = req.params.post_id;
 
-    const post = await Posts.findByPk(post_id);
-
-    if (!post) {
-      return errorResponseData(res, "Post not found");
-    }
-
     let whereClause = { post_id, parent_id: null };
-    if (post.visibility === "EveryOneCan view ") {
-      if (post.user_id !== user_id) {
-        return errorResponseData(res, "You cannot view comments on this post");
-      }
-      whereClause.user_id = post.user_id;
-    }
 
     const comments = await Comment.findAll({
       where: whereClause,

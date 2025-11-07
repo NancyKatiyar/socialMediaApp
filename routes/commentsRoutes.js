@@ -11,7 +11,7 @@ commentRouter.delete("/deleteComment/:id",authMiddleware,deleteComment);
 commentRouter.put("/updateComment/:post_id",authMiddleware,joiValidate(commentSchema),updateComment);
 commentRouter.get("/getAllComments",getAllComments);
 commentRouter.post("/createReply/:post_id/comments/:parent_id",authMiddleware,createReply);
-commentRouter.get("/getAllReplies/:post_id/comments/:parent_id",authMiddleware,getAllReplies);
+commentRouter.get("/getAllReplies/:post_id/",getAllReplies);
 
 
 module.exports = commentRouter;
